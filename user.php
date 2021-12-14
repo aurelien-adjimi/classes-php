@@ -12,14 +12,29 @@ class user {
     }
 
     public function register($login, $password, $email, $firstname, $lastname) {
+        $bdd = mysqli_connect("localhost", "root", "", "classes");
         $req = "INSERT INTO utilisateurs(login, password, email, firstname, lastname) VALUES ('$login', '$password', '$email', '$firstname', '$lastname')";
         return $req;
     }
     
     public function connect($login, $password) {
-        if (isset($_SESSION)) {
-            session_start();
-        }
+            $bdd = mysqli_connect("localhost", "root", "", "classes");
+            $req2 = mysqli_query($bdd, "SELECT * FROM `utilisateurs` WHERE login='$login' AND password='$password'");
+            $res = mysqli_fetch_all($req2, MYSQLI_ASSOC);
+
+            if(count($res)) {
+                $this->login = $res[0]['login'];
+                $this->email = $res[0]['email'];
+                $this->firstname = $res[0]['firstname'];
+                $this->lastname = $res[0]['lastname'];
+
+                session_start();
+
+                $_SESSION['login'] = $this->login;
+                $_SESSION['email'] = $this->email;
+                $_SESSION['firstname'] = $this->firstname;
+                $_SESSION['lastname'] = $this->lastname;
+            }
     }
       
     public function disconnect() {
@@ -30,15 +45,29 @@ class user {
     }
 
     public function delete() {
+        $bdd = mysqli_connect("localhost", "root", "", "classes");
         $id = $_SESSION['id'];
-        $req3 = "DELETE id FROM utilisateurs WHERE id = '$id'";
+        $req3 = mysqli_query($bdd,"DELETE FROM utilisateurs WHERE id = '$id'" );
+        $this -> disconnect();
     }
 
     public function update($login, $password, $email, $firstname, $lastname) {
-        $req4 = "UPDATE utilisateurs SET login = '$login', password = '$password', email = '$email', firstname = '$firstname', lastname = '$lastname'";
-    }
-    public function isConnected() {
+        $bdd = mysqli_connect("localhost", "root", "", "classes");
+        $req4 = mysqli_query($bdd, "UPDATE utilisateurs SET login = '$login', password = '$password', email = '$email', firstname = '$firstname', lastname = '$lastname'");
 
+        $this->_login = $login;
+        $this->_password = $password;
+        $this->_email = $email;
+        $this->_firstname = $firstname;
+        $this->_lastname = $lastname;
+    }
+
+    public function isConnected() {
+        $isConnected = false; 
+        if (isset($_SESSION['login'])) {
+            $isConnected = true;
+            return $isConnected;
+        }
     }
     public function getAllInfos() {
         $bdd = mysqli_connect("localhost", "root", "", "classes");
