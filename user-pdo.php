@@ -1,7 +1,11 @@
 <?php
 
 $GLOBALS['PDO'] = true; 
-
+if($PDO == true) {
+    $bdd = new PDO('mysql:host=localhost;dbname=classes','root','');
+} else {
+    $bdd = mysqli_connect("localhost", "root", "", "classes");
+}
 
 class user {
     private $id;
@@ -15,7 +19,7 @@ class user {
     }
 
     public function register($login, $password, $email, $firstname, $lastname) {
-        $req = $GLOBALS['bdd']->prepare("INSERT INTO `utilisateurs`(`login`, `email`, `password`, `firstname`, `lastname`) VALUE ('$login','$email','$password','$firstname','$lastname')");
+        $req = $GLOBALS['BDD']->prepare("INSERT INTO `utilisateurs`(`login`, `email`, `password`, `firstname`, `lastname`) VALUE ('$login','$email','$password','$firstname','$lastname')");
         $req->execute();
     
         $user = [$login, $password, $email, $firstname, $lastname];
@@ -23,7 +27,7 @@ class user {
     }
 
     public function connect($login, $password) {
-        $req2 = $GLOBALS['bdd']->query("SELECT * FROM `utilisateurs` WHERE login='$login' AND password='$password'");
+        $req2 = $GLOBALS['BDD']->query("SELECT * FROM `utilisateurs` WHERE login='$login' AND password='$password'");
         $req2->execute();
         $res = $req2->fetchAll(PDO::FETCH_ASSOC);
 
@@ -60,7 +64,7 @@ class user {
     }
 
     public function update($login, $password, $email, $firstname, $lastname) {
-        $req4 = $GLOBALS['bdd']->prepare("INSERT INTO `utilisateurs`(`login`, `email`, `password`, `firstname`, `lastname`) VALUE ('$login','$email','$password','$firstname','$lastname')");
+        $req4 = $GLOBALS['BDD']->prepare("INSERT INTO `utilisateurs`(`login`, `email`, `password`, `firstname`, `lastname`) VALUE ('$login','$email','$password','$firstname','$lastname')");
         $req4->execute();
 
         $this->_login = $login;
